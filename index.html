@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>גוש קראש 🔥 קואליציה או גוש השינוי?</title>
+<meta property="og:title" content="גוש קראש 🔥">
+<meta property="og:description" content="10 שאלות סוויפ. בסוף מגלים אם אתה גוש הקואליציה או גוש השינוי.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: linear-gradient(160deg, #1b1035 0%, #3d1a5b 55%, #7a1f4d 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 430px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    text-align: center;
+    padding: 8px 0 4px;
+  }
+  header .logo {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+  header .logo .flame { color: #ff5864; }
+  .progress-wrap { margin-top: 10px; display: none; }
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff5864, #ffb56b);
+    border-radius: 3px;
+    transition: width .3s ease;
+  }
+  .progress-text {
+    font-size: 12px;
+    opacity: .7;
+    margin-top: 5px;
+  }
+
+  /* ---------- screens ---------- */
+  .screen { flex: 1; display: none; flex-direction: column; min-height: 0; }
+  .screen.active { display: flex; }
+
+  /* ---------- intro ---------- */
+  #intro { justify-content: center; align-items: center; text-align: center; gap: 22px; }
+  #intro h1 {
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+  #intro h1 .vs { color: #ffb56b; font-size: 22px; display: block; margin: 6px 0; }
+  #intro p.sub { font-size: 16px; opacity: .85; line-height: 1.6; }
+  .swipe-legend {
+    display: flex;
+    direction: ltr;
+    gap: 14px;
+    font-size: 15px;
+  }
+  .swipe-legend span {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: 8px 14px;
+    border-radius: 999px;
+  }
+  .swipe-legend .no { color: #ff8a93; }
+  .swipe-legend .yes { color: #7be3a2; }
+  .btn-main {
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(90deg, #ff5864, #ff7854);
+    border: none;
+    border-radius: 999px;
+    padding: 15px 46px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(255,88,100,.4);
+    transition: transform .15s ease;
+  }
+  .btn-main:active { transform: scale(.96); }
+
+  /* ---------- deck ---------- */
+  #game { position: relative; }
+  .deck {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin: 14px 0 10px;
+  }
+  .card {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    color: #222;
+    border-radius: 22px;
+    box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 28px 22px;
+    gap: 18px;
+    touch-action: none;
+    user-select: none;
+    will-change: transform;
+  }
+  .card .emoji { font-size: 84px; line-height: 1; }
+  .card .question {
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .card .hint { font-size: 13px; color: #999; }
+  .card.behind-1 { transform: scale(.95) translateY(14px); z-index: 1; }
+  .card.behind-2 { transform: scale(.9) translateY(28px); z-index: 0; }
+  .card.top { z-index: 2; cursor: grab; }
+  .card.flying { transition: transform .35s ease, opacity .35s ease; }
+
+  .stamp {
+    position: absolute;
+    top: 26px;
+    font-size: 34px;
+    font-weight: 900;
+    padding: 4px 18px;
+    border: 4px solid;
+    border-radius: 10px;
+    opacity: 0;
+    background: rgba(255,255,255,.85);
+  }
+  .stamp.yes {
+    right: 22px;
+    color: #2ecc71;
+    border-color: #2ecc71;
+    transform: rotate(12deg);
+  }
+  .stamp.no {
+    left: 22px;
+    color: #e74c3c;
+    border-color: #e74c3c;
+    transform: rotate(-12deg);
+  }
+
+  /* ---------- action buttons ---------- */
+  .actions {
+    display: flex;
+    direction: ltr;
+    justify-content: center;
+    gap: 46px;
+    padding: 6px 0 10px;
+  }
+  .actions button {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 30px;
+    font-weight: 900;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
+    transition: transform .12s ease;
+  }
+  .actions button:active { transform: scale(.9); }
+  .actions .btn-no { background: linear-gradient(135deg, #e74c3c, #ff5864); }
+  .actions .btn-yes { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+
+  /* ---------- result ---------- */
+  #result { justify-content: center; align-items: center; text-align: center; gap: 16px; }
+  .match-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #ffb56b;
+    animation: pop .5s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(.4); opacity: 0; }
+    70% { transform: scale(1.12); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .match-card {
+    background: #fff;
+    color: #222;
+    border-radius: 22px;
+    padding: 30px 26px;
+    width: 100%;
+    box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: pop .55s ease;
+  }
+  .match-card .emoji { font-size: 76px; line-height: 1; }
+  .match-card .name { font-size: 26px; font-weight: 900; }
+  .match-card .percent { font-size: 17px; font-weight: 700; color: #ff5864; }
+  .match-card .desc { font-size: 15.5px; line-height: 1.65; color: #555; }
+  .result-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn-secondary {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 999px;
+    padding: 12px 26px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo"><span class="flame">🔥</span> גוש קראש</div>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText"></div>
+    </div>
+  </header>
+
+  <!-- intro -->
+  <section class="screen active" id="intro">
+    <h1>גוש קראש</h1>
+    <p class="sub">10 שאלות. סוויפ, בלי לחשוב יותר מדי.<br>בסוף מגלים: אתה גוש הקואליציה או גוש השינוי?</p>
+    <div class="swipe-legend">
+      <span class="no">&#x2190; שמאלה זה לא</span>
+      <span class="yes">ימינה זה כן &#x2192;</span>
+    </div>
+    <button class="btn-main" id="startBtn">מתחילים</button>
+  </section>
+
+  <!-- game -->
+  <section class="screen" id="game">
+    <div class="deck" id="deck"></div>
+    <div class="actions">
+      <button class="btn-no" id="btnNo" aria-label="לא">&#x2715;</button>
+      <button class="btn-yes" id="btnYes" aria-label="כן">&#x2713;</button>
+    </div>
+  </section>
+
+  <!-- result -->
+  <section class="screen" id="result">
+    <div class="match-title">🔥 יש התאמה! 🔥</div>
+    <div class="match-card">
+      <div class="emoji" id="resEmoji"></div>
+      <div class="name" id="resName"></div>
+      <div class="percent" id="resPercent"></div>
+      <div class="desc" id="resDesc"></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn-main" id="againBtn">עוד פעם</button>
+      <button class="btn-secondary" id="shareBtn">שיתוף</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// pole: which bloc a "yes" answer points to
+const QUESTIONS = [
+  { emoji: '🚌', text: 'תחבורה ציבורית בשבת?', pole: 'change' },
+  { emoji: '💍', text: 'נישואים אזרחיים בישראל?', pole: 'change' },
+  { emoji: '⚖️', text: 'עונש מוות למחבלים?', pole: 'coalition' },
+  { emoji: '🕊️', text: 'מדינה פלסטינית לצד ישראל?', pole: 'change' },
+  { emoji: '🏔️', text: 'ריבונות ביהודה ושומרון?', pole: 'coalition' },
+  { emoji: '🎖️', text: 'גיוס חרדים לצבא?', pole: 'change' },
+  { emoji: '🕍', text: 'הפרדת דת ומדינה?', pole: 'change' },
+  { emoji: '🏛️', text: 'בג"ץ חזק מדי?', pole: 'coalition' },
+  { emoji: '📺', text: 'התקשורת נגד הימין?', pole: 'coalition' },
+  { emoji: '📚', text: 'לימודי ליבה לכולם, גם בחינוך החרדי?', pole: 'change' },
+];
+
+const PERSONAS = {
+  coalition: {
+    emoji: '🧢',
+    name: 'גוש הקואליציה',
+    desc: 'יצא לך ימינה. אצלך עמית סגל זה כתבה, לא טריגר. בוואטסאפ המשפחתי אתה זה ששולח "תקראו רגע" עם חץ למעלה.',
+  },
+  change: {
+    emoji: '📢',
+    name: 'גוש השינוי',
+    desc: 'יצא לך גוש השינוי. היית בקפלן לפחות פעם אחת, או לפחות בסטורי. אתה בטוח שעוד בחירות אחת וזה מסתדר.',
+  },
+  center: {
+    emoji: '🎈',
+    name: 'מנדט צף',
+    desc: 'חצי מהסוויפים לפה, חצי לשם. אתה המנדט הצף שכל הסקרים רבים עליו. תבדוק את הטלפון, גנץ בטח מחייג.',
+  },
+};
+
+const deck = document.getElementById('deck');
+const screens = {
+  intro: document.getElementById('intro'),
+  game: document.getElementById('game'),
+  result: document.getElementById('result'),
+};
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+
+let index = 0;
+let coalitionScore = 0; // answers aligned with the coalition bloc
+
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+  progressWrap.style.display = name === 'game' ? 'block' : 'none';
+}
+
+function updateProgress() {
+  progressFill.style.width = (index / QUESTIONS.length * 100) + '%';
+  progressText.textContent = 'שאלה ' + Math.min(index + 1, QUESTIONS.length) + ' מתוך ' + QUESTIONS.length;
+}
+
+function buildCard(q) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML =
+    '<div class="stamp yes">כן</div>' +
+    '<div class="stamp no">לא</div>' +
+    '<div class="emoji">' + q.emoji + '</div>' +
+    '<div class="question">' + q.text + '</div>' +
+    '<div class="hint">שמאלה זה לא &middot; ימינה זה כן</div>';
+  return card;
+}
+
+function renderDeck() {
+  deck.innerHTML = '';
+  const upcoming = QUESTIONS.slice(index, index + 3);
+  upcoming.forEach((q, i) => {
+    const card = buildCard(q);
+    if (i === 0) { card.classList.add('top'); attachDrag(card); }
+    else card.classList.add('behind-' + i);
+    deck.appendChild(card);
+  });
+  updateProgress();
+}
+
+function attachDrag(card) {
+  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false;
+
+  const stampYes = card.querySelector('.stamp.yes');
+  const stampNo = card.querySelector('.stamp.no');
+
+  function onDown(e) {
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    card.setPointerCapture(e.pointerId);
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    dx = e.clientX - startX;
+    dy = e.clientY - startY;
+    card.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + (dx / 15) + 'deg)';
+    stampYes.style.opacity = Math.max(0, Math.min(1, dx / 80));
+    stampNo.style.opacity = Math.max(0, Math.min(1, -dx / 80));
+  }
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    if (dx > 100) flyOut(card, true);
+    else if (dx < -100) flyOut(card, false);
+    else {
+      card.classList.add('flying');
+      card.style.transform = '';
+      stampYes.style.opacity = 0;
+      stampNo.style.opacity = 0;
+      setTimeout(() => card.classList.remove('flying'), 350);
+    }
+    dx = 0; dy = 0;
+  }
+
+  card.addEventListener('pointerdown', onDown);
+  card.addEventListener('pointermove', onMove);
+  card.addEventListener('pointerup', onUp);
+  card.addEventListener('pointercancel', onUp);
+}
+
+function flyOut(card, isYes) {
+  if (!card.classList.contains('top')) return;
+  card.classList.remove('top');
+  const q = QUESTIONS[index];
+  const aligned = (isYes && q.pole === 'coalition') || (!isYes && q.pole === 'change');
+  if (aligned) coalitionScore++;
+
+  card.classList.add('flying');
+  const dir = isYes ? 1 : -1;
+  card.style.transform = 'translate(' + (dir * 600) + 'px, -40px) rotate(' + (dir * 30) + 'deg)';
+  card.style.opacity = '0';
+  card.querySelector('.stamp.' + (isYes ? 'yes' : 'no')).style.opacity = 1;
+
+  index++;
+  setTimeout(() => {
+    if (index >= QUESTIONS.length) showResult();
+    else renderDeck();
+  }, 320);
+}
+
+function answerTop(isYes) {
+  const top = deck.querySelector('.card.top');
+  if (top) flyOut(top, isYes);
+}
+
+function showResult() {
+  const total = QUESTIONS.length;
+  const changeScore = total - coalitionScore;
+  let key, score;
+  if (coalitionScore > changeScore) { key = 'coalition'; score = coalitionScore; }
+  else if (changeScore > coalitionScore) { key = 'change'; score = changeScore; }
+  else { key = 'center'; score = coalitionScore; }
+
+  const p = PERSONAS[key];
+  document.getElementById('resEmoji').textContent = p.emoji;
+  document.getElementById('resName').textContent = p.name;
+  document.getElementById('resPercent').textContent =
+    key === 'center' ? '5 מנדטים לכל גוש' : score + ' מתוך ' + total + ' מנדטים אצלך בראש';
+  document.getElementById('resDesc').textContent = p.desc;
+  showScreen('result');
+}
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  index = 0; coalitionScore = 0;
+  renderDeck();
+  showScreen('game');
+});
+document.getElementById('againBtn').addEventListener('click', () => {
+  index = 0; coalitionScore = 0;
+  renderDeck();
+  showScreen('game');
+});
+document.getElementById('btnYes').addEventListener('click', () => answerTop(true));
+document.getElementById('btnNo').addEventListener('click', () => answerTop(false));
+document.addEventListener('keydown', (e) => {
+  if (!screens.game.classList.contains('active')) return;
+  if (e.key === 'ArrowRight') answerTop(true);
+  if (e.key === 'ArrowLeft') answerTop(false);
+});
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const name = document.getElementById('resName').textContent;
+  const text = 'יצא לי ' + name + ' 🔥 גוש קראש. ואתה?';
+  if (navigator.share) {
+    try { await navigator.share({ text, url: location.href }); } catch (e) {}
+  } else {
+    await navigator.clipboard.writeText(text + ' ' + location.href);
+    document.getElementById('shareBtn').textContent = 'הועתק';
+  }
+});
+</script>
+</body>
+</html>
